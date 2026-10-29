@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pointage Stil Pro</title>
+<meta name="theme-color" content="#1E2A26">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pointage">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EEF0EB; --panel:#FFFFFF; --ink:#1E2A26; --muted:#5E6B66; --line:#D5DAD3;
+  --oak:#B7773A; --oak-soft:#F3E6D6;
+  --in:#23855A; --in-soft:#DDF0E5; --out:#B8412F; --out-soft:#F7E0DB;
+  --warn:#A56A00; --warn-soft:#FBEFD4;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#111715; --panel:#1A221F; --ink:#E9EEE9; --muted:#9AA7A1; --line:#2C3833;
+    --oak:#D79A5A; --oak-soft:#3A2C1D;
+    --in:#3DB57E; --in-soft:#173A2A; --out:#E0664F; --out-soft:#43211B;
+    --warn:#E3A73A; --warn-soft:#3B2D12;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
+body{background:var(--ground);color:var(--ink);font:16px/1.4 var(--body);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);
+  -webkit-tap-highlight-color:transparent}
+.wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font:700 20px/1 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.brand small{display:block;font:500 12px/1.2 var(--body);letter-spacing:.12em;color:var(--muted);margin-top:3px}
+.who{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;
+  padding:8px 14px;font:600 15px var(--body);max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.clock{text-align:center;padding:10px 0 4px}
+.time{font:600 clamp(64px,22vw,96px)/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.time .s{color:var(--muted);font-size:.45em;margin-left:4px}
+.date{color:var(--muted);font-size:17px;margin-top:4px;text-transform:capitalize}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.gps{display:flex;gap:12px;align-items:center}
+.gps .txt{flex:1;min-width:0}
+.gps .t1{font-weight:600}
+.gps .t2{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.gps a{color:var(--oak);font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}
+.dot.ok{background:var(--in)} .dot.wait{background:var(--warn);animation:pulse 1s infinite} .dot.err{background:var(--out)}
+@keyframes pulse{50%{opacity:.35}}
+.btn-gps{flex:none;border:0;background:var(--oak-soft);color:var(--ink);border-radius:10px;padding:12px 14px;
+  font:600 15px var(--body);cursor:pointer;display:flex;gap:6px;align-items:center}
+.btn-gps svg{width:18px;height:18px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{border:0;border-radius:16px;padding:22px 10px 18px;color:#fff;cursor:pointer;
+  font:700 26px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .08s}
+.big small{font:500 13px var(--body);letter-spacing:0;text-transform:none;opacity:.9}
+.big:active{transform:scale(.97)}
+.big.in{background:var(--in)} .big.out{background:var(--out)}
+.big.in.suggest{box-shadow:0 0 0 3px var(--ground),0 0 0 6px var(--in)}
+.big.out.suggest{box-shadow:0 0 0 3px var(--ground),0 0 0 6px var(--out)}
+.big[disabled]{opacity:.55}
+.state{font-size:15px;color:var(--muted);text-align:center}
+.state b{color:var(--ink)}
+h2{font:600 14px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.hist li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.hist li:first-child{border-top:0}
+.pill{font:600 12px var(--body);padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.pill.in{background:var(--in-soft);color:var(--in)} .pill.out{background:var(--out-soft);color:var(--out)}
+.hist .h{font:600 18px var(--display);font-variant-numeric:tabular-nums}
+.hist .where{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync{font-size:12px;font-weight:600}
+.sync.ok{color:var(--in)} .sync.wait{color:var(--warn)}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+.banner{border-radius:12px;padding:10px 12px;font-size:14px;background:var(--warn-soft);color:var(--ink)}
+/* Overlay */
+.ov{position:fixed;inset:0;background:rgba(10,14,12,.55);display:flex;align-items:flex-end;justify-content:center;z-index:10;
+  padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.sheet{background:var(--panel);border-radius:18px;padding:20px;width:100%;max-width:460px;display:flex;flex-direction:column;gap:12px}
+.sheet h3{margin:0;font:700 24px var(--display);letter-spacing:.03em;text-transform:uppercase}
+.sheet p{margin:0;color:var(--muted)}
+label{font-weight:600;font-size:14px;display:flex;flex-direction:column;gap:6px}
+input{font:16px var(--body);padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--ground);color:var(--ink);width:100%}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.b2{border:0;border-radius:12px;padding:14px;font:600 16px var(--body);cursor:pointer;background:var(--ink);color:var(--panel)}
+.b2.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+details summary{cursor:pointer;color:var(--muted);font-size:14px}
+details[open]{display:flex;flex-direction:column;gap:10px}
+.done{text-align:center;align-items:center}
+.done .big-ico{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;color:#fff;margin:4px auto}
+.done .big-ico svg{width:40px;height:40px}
+.done .hh{font:600 54px/1 var(--display);font-variant-numeric:tabular-nums}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--oak);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Stil Pro<small>Pointage chantier</small></div>
+    <button class="who" id="who" type="button" aria-label="Changer de nom">—</button>
+  </header>
+
+  <div id="demo" class="banner" hidden>Mode essai : le serveur n'est pas configuré, les pointages restent sur ce téléphone.</div>
+
+  <section class="clock" aria-live="off">
+    <div class="time" id="time">--:--<span class="s">--</span></div>
+    <div class="date" id="date"></div>
+  </section>
+
+  <section class="card gps" aria-live="polite">
+    <span class="dot" id="gdot"></span>
+    <div class="txt">
+      <div class="t1" id="g1">Position non relevée</div>
+      <div class="t2" id="g2">Appuyez sur « Me localiser »</div>
+    </div>
+    <button class="btn-gps" id="btnGps" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7.5"/></svg>
+      Me localiser
+    </button>
+  </section>
+
+  <section class="actions">
+    <button class="big in" id="bIn" type="button">Arrivée<small>Je commence</small></button>
+    <button class="big out" id="bOut" type="button">Départ<small>Je termine</small></button>
+  </section>
+  <div class="state" id="state"></div>
+
+  <h2>Mes derniers pointages</h2>
+  <section class="card"><ul class="hist" id="hist"></ul></section>
+</div>
+
+<!-- Réglages / premier lancement -->
+<div class="ov" id="ovSetup" hidden>
+  <form class="sheet" id="fSetup">
+    <h3>Bienvenue</h3>
+    <p>Indiquez votre nom. Il sera envoyé au bureau à chaque pointage.</p>
+    <label>Prénom et nom <input id="iNom" autocomplete="name" required maxlength="60" placeholder="ex. Karim Benali"></label>
+    <details id="adv">
+      <summary>Réglages du serveur (fournis par le bureau)</summary>
+      <label>Adresse du serveur <input id="iApi" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec"></label>
+      <label>Code équipe <input id="iCode" autocapitalize="characters"></label>
+    </details>
+    <button class="b2" type="submit">Enregistrer</button>
+  </form>
+</div>
+
+<!-- Confirmation -->
+<div class="ov" id="ovDone" hidden>
+  <div class="sheet done">
+    <div class="big-ico" id="dIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h3 id="dTitle">Arrivée enregistrée</h3>
+    <div class="hh" id="dTime">07:32</div>
+    <p id="dMsg">Envoyé au bureau.</p>
+    <button class="b2" id="dOk" type="button">OK</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const LS = {
+    get(k, d){ try{ const v = localStorage.getItem('stp_'+k); return v==null? d : JSON.parse(v); }catch(e){ return d; } },
+    set(k, v){ try{ localStorage.setItem('stp_'+k, JSON.stringify(v)); }catch(e){} }
+  };
+
+  // ---- Configuration (lien envoyé par le bureau : ?api=…&code=…&nom=…) ----
+  const q = new URLSearchParams(location.search);
+  let cfg = LS.get('cfg', {api:'', code:'', nom:''});
+  if (q.get('api')) cfg.api = q.get('api');
+  if (q.get('code')) cfg.code = q.get('code');
+  if (q.get('nom')) cfg.nom = q.get('nom');
+  LS.set('cfg', cfg);
+  if (q.toString()) history.replaceState(null, '', location.pathname);
+
+  const demo = () => !cfg.api;
+  function applyCfg(){
+    $('who').textContent = cfg.nom || 'Mon nom';
+    $('demo').hidden = !demo();
+  }
+
+  // ---- Horloge ----
+  const fmtDate = new Intl.DateTimeFormat('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const two = n => String(n).padStart(2,'0');
+  const hm = d => two(d.getHours())+':'+two(d.getMinutes());
+  function tick(){
+    const d = new Date();
+    $('time').innerHTML = hm(d) + '<span class="s">'+two(d.getSeconds())+'</span>';
+    $('date').textContent = fmtDate.format(d);
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ---- Géolocalisation ----
+  let pos = null; // {lat,lng,acc,at}
+  let gpsErr = '';
+  function showGps(state, t1, t2){
+    $('gdot').className = 'dot ' + state;
+    $('g1').textContent = t1;
+    $('g2').innerHTML = t2;
+  }
+  function locate(){
+    return new Promise(resolve => {
+      if (!('geolocation' in navigator)) {
+        gpsErr = 'GPS non disponible';
+        showGps('err', 'GPS indisponible', 'Ce téléphone ne donne pas sa position.');
+        return resolve(null);
+      }
+      if (!window.isSecureContext) {
+        gpsErr = 'page non sécurisée (http)';
+        showGps('err', 'Localisation bloquée', 'La page doit être ouverte en https://');
+        return resolve(null);
+      }
+      showGps('wait', 'Recherche de la position…', 'Restez à l’extérieur si possible');
+      navigator.geolocation.getCurrentPosition(p => {
+        pos = {lat:+p.coords.latitude.toFixed(6), lng:+p.coords.longitude.toFixed(6), acc:Math.round(p.coords.accuracy), at:Date.now()};
+        gpsErr = '';
+        const link = 'https://www.google.com/maps?q='+pos.lat+','+pos.lng;
+        showGps('ok', 'Position relevée · ±'+pos.acc+' m',
+          pos.lat+', '+pos.lng+' · <a href="'+link+'" target="_blank" rel="noopener">Voir la carte</a>');
+        resolve(pos);
+      }, e => {
+        const msg = {1:'Autorisation refusée', 2:'Position introuvable', 3:'Délai dépassé'}[e.code] || 'Erreur';
+        gpsErr = msg;
+        const aide = e.code === 1
+          ? 'Autorisez la localisation pour ce site dans les réglages du navigateur.'
+          : 'Réessayez dans quelques secondes.';
+        showGps('err', msg, aide);
+        resolve(null);
+      }, {enableHighAccuracy:true, timeout:20000, maximumAge:0});
+    });
+  }
+  $('btnGps').addEventListener('click', locate);
+
+  // ---- File d'envoi (fonctionne sans réseau, renvoie plus tard) ----
+  let hist = LS.get('hist', []);   // [{id,type,time,lat,lng,acc,sent,adresse}]
+  function saveHist(){ hist = hist.slice(0, 40); LS.set('hist', hist); }
+
+  async function sendOne(p){
+    if (demo()) { p.sent = true; return true; }
+    try{
+      const r = await fetch(cfg.api, {method:'POST', body: JSON.stringify({
+        id:p.id, code:cfg.code, nom:cfg.nom, type:p.type, time:p.time,
+        lat:p.lat, lng:p.lng, acc:p.acc, gpsErreur:p.gpsErr, appareil:navigator.userAgent
+      })});
+      const j = await r.json();
+      if (j.ok) { p.sent = true; if (j.adresse) p.adresse = j.adresse; return true; }
+      if (j.erreur === 'code_equipe') p.err = 'Code équipe refusé';
+      return false;
+    }catch(e){ return false; }
+  }
+  let flushing = false;
+  async function flush(){
+    if (flushing) return; flushing = true;
+    for (const p of hist.filter(x => !x.sent).reverse()) { await sendOne(p); saveHist(); }
+    flushing = false; render();
+  }
+  window.addEventListener('online', flush);
+  setInterval(flush, 30000);
+
+  // ---- Pointer ----
+  async function pointer(type){
+    if (!cfg.nom) { openSetup(); return; }
+    $('bIn').disabled = $('bOut').disabled = true;
+    $('state').textContent = 'Relevé de la position…';
+    const now = new Date();
+    let p = pos && (Date.now() - pos.at < 120000) ? pos : await locate();
+    const item = {
+      id: now.getTime().toString(36) + Math.random().toString(36).slice(2,7),
+      type, time: now.toISOString(),
+      lat: p ? p.lat : null, lng: p ? p.lng : null, acc: p ? p.acc : null,
+      gpsErr: p ? '' : gpsErr, sent:false
+    };
+    hist.unshift(item); saveHist();
+    $('state').textContent = 'Envoi au bureau…';
+    const ok = await sendOne(item); saveHist();
+    $('bIn').disabled = $('bOut').disabled = false;
+    render();
+
+    $('dIco').style.background = type === 'arrivee' ? 'var(--in)' : 'var(--out)';
+    $('dTitle').textContent = (type === 'arrivee' ? 'Arrivée' : 'Départ') + ' enregistrée';
+    if (type === 'depart') $('dTitle').textContent = 'Départ enregistré';
+    $('dTime').textContent = hm(now);
+    $('dMsg').textContent = ok
+      ? (demo() ? 'Enregistré sur ce téléphone (mode essai).' : 'Envoyé au bureau' + (p ? ' avec votre position.' : ' — sans position (' + gpsErr.toLowerCase() + ').'))
+      : (item.err || 'Pas de réseau : le pointage est gardé et sera envoyé automatiquement.');
+    $('ovDone').hidden = false;
+    if (navigator.vibrate) navigator.vibrate(60);
+  }
+  $('bIn').addEventListener('click', () => pointer('arrivee'));
+  $('bOut').addEventListener('click', () => pointer('depart'));
+  $('dOk').addEventListener('click', () => { $('ovDone').hidden = true; });
+
+  // ---- Affichage ----
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function render(){
+    const ul = $('hist');
+    if (!hist.length) { ul.innerHTML = '<li class="empty" style="display:block">Aucun pointage pour l’instant.</li>'; }
+    else ul.innerHTML = hist.slice(0, 10).map(p => {
+      const d = new Date(p.time);
+      const today = d.toDateString() === new Date().toDateString();
+      const jour = today ? '' : d.toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short'}) + ' · ';
+      const where = p.adresse ? esc(p.adresse) : (p.lat != null ? 'Position ±'+p.acc+' m' : 'Sans position');
+      const sync = p.sent ? '<span class="sync ok">Envoyé</span>' : '<span class="sync wait">En attente</span>';
+      return '<li><span class="pill '+(p.type==='arrivee'?'in':'out')+'">'+(p.type==='arrivee'?'Arrivée':'Départ')+'</span>'
+        + '<div><div class="h">'+jour+hm(d)+'</div><div class="where">'+where+'</div></div>'+sync+'</li>';
+    }).join('');
+
+    // Suggestion du prochain pointage + état du jour
+    const last = hist[0];
+    const lastToday = last && new Date(last.time).toDateString() === new Date().toDateString() ? last : null;
+    $('bIn').classList.toggle('suggest', !lastToday || lastToday.type === 'depart');
+    $('bOut').classList.toggle('suggest', !!lastToday && lastToday.type === 'arrivee');
+    const pending = hist.filter(x => !x.sent).length;
+    let s = lastToday
+      ? (lastToday.type === 'arrivee' ? 'Sur le chantier depuis <b>'+hm(new Date(lastToday.time))+'</b>' : 'Journée terminée à <b>'+hm(new Date(lastToday.time))+'</b>')
+      : 'Pas encore pointé aujourd’hui';
+    if (pending) s += ' · <b>'+pending+'</b> en attente d’envoi';
+    $('state').innerHTML = s;
+  }
+
+  // ---- Réglages ----
+  function openSetup(){
+    $('iNom').value = cfg.nom || '';
+    $('iApi').value = cfg.api || '';
+    $('iCode').value = cfg.code || '';
+    $('adv').open = !cfg.api;
+    $('ovSetup').hidden = false;
+    setTimeout(() => $('iNom').focus(), 50);
+  }
+  $('who').addEventListener('click', openSetup);
+  $('fSetup').addEventListener('submit', e => {
+    e.preventDefault();
+    cfg.nom = $('iNom').value.trim();
+    cfg.api = $('iApi').value.trim();
+    cfg.code = $('iCode').value.trim();
+    LS.set('cfg', cfg);
+    $('ovSetup').hidden = true;
+    applyCfg(); flush();
+  });
+
+  applyCfg(); render();
+  if (!cfg.nom) openSetup(); else { locate(); flush(); }
+})();
+</script>
+</body>
+</html>
