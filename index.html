@@ -182,7 +182,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   if (q.get('code')) cfg.code = q.get('code');
   if (q.get('nom')) cfg.nom = q.get('nom');
   LS.set('cfg', cfg);
-  if (q.toString()) history.replaceState(null, '', location.pathname);
+  // Les réglages restent dans l'adresse : l'icône de l'écran d'accueil les garde (iPhone)
 
   const demo = () => !cfg.api;
   function applyCfg(){
