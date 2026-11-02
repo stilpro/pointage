@@ -185,6 +185,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   // Les réglages restent dans l'adresse : l'icône de l'écran d'accueil les garde (iPhone)
 
   const demo = () => !cfg.api;
+  // Identifiant propre à ce téléphone (créé une fois, gardé ensuite)
+  let devId = LS.get('dev', '');
+  if (!devId) { devId = 'T' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); LS.set('dev', devId); }
   function applyCfg(){
     $('who').textContent = cfg.nom || 'Mon nom';
     $('demo').hidden = !demo();
@@ -251,7 +254,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
     try{
       const r = await fetch(cfg.api, {method:'POST', body: JSON.stringify({
         id:p.id, code:cfg.code, nom:cfg.nom, type:p.type, time:p.time,
-        lat:p.lat, lng:p.lng, acc:p.acc, gpsErreur:p.gpsErr, appareil:navigator.userAgent
+        lat:p.lat, lng:p.lng, acc:p.acc, gpsErreur:p.gpsErr, appareil:navigator.userAgent, appareilId:devId
       })});
       const j = await r.json();
       if (j.ok) { p.sent = true; if (j.adresse) p.adresse = j.adresse; return true; }
